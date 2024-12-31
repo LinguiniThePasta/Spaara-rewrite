@@ -12,11 +12,10 @@ export default function TabLayout() {
     ];
 
     return (
-        <Tabs initialRouteName="shopping">
+        <Tabs screenOptions={{ headerShown: false }}>
             {tabs.map((tab) => (
                 <Tabs.Screen
                     name={tab.key}
-                    key={tab.key}
                     options={{
                         title: tab.label,
                         tabBarIcon: ({color}) => (
