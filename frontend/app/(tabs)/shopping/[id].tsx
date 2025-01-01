@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Button} from 'react-native';
+import {View, Text, Button, Pressable, SafeAreaView} from 'react-native';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {useLocalSearchParams} from "expo-router";
-import { SearchBar } from '@/components/ui/SearchBar';
-import { CategoryList } from '@/components/ui/CategoryList';
+import {router, useLocalSearchParams} from "expo-router";
+import {SearchBar} from '@/components/ui/SearchBar';
+import {CategoryList} from '@/components/ui/CategoryList';
+import tw from "twrnc";
+import {Header} from "@/components/ui/Header";
 
 export default function ShoppingDetailScreen() {
     const {id} = useLocalSearchParams()
@@ -17,29 +19,37 @@ export default function ShoppingDetailScreen() {
                 {
                     id: 1,
                     name: 'Fresh Bananas - Each',
-                    quantity: 1,
-                    price: null,
+                    quantity: 3,
+                    price: 0.89,
+                    unit_price: 0.89,
+                    unit: "cnt",
+                    store: 'Walmart',
                     favorited: false,
                     category: 'Beefed Bananas',
-                    added_after_optimization: false
+                    added_after_optimization: false,
+                    optimized: true,
                 },
                 {
                     id: 2,
                     name: 'Eggs - Large - 12 ct',
                     quantity: 3,
                     price: null,
+                    unit_price: null,
                     favorited: false,
                     category: 'Beefed Bananas',
-                    added_after_optimization: false
+                    added_after_optimization: false,
+                    optimized: false,
                 },
                 {
                     id: 3,
                     name: 'Beef Choice Cubed',
                     quantity: 1,
                     price: null,
+                    unit_price: null,
                     favorited: false,
                     category: 'Beefed Bananas',
-                    added_after_optimization: false
+                    added_after_optimization: false,
+                    optimized: false,
                 },
             ],
         },
@@ -51,20 +61,29 @@ export default function ShoppingDetailScreen() {
         AsyncStorage.setItem('activeListID', id);
     }, [id]);
 
+    const goBack = async () => {
+        await AsyncStorage.removeItem('activeListID');
+        router.push('/shopping');
+    }
     return (
-        <View className="flex-1 bg-background">
-            <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
-            <CategoryList
-                categories={categories}
-                toggleCategory={null}
-                toggleFavorite={null}
-                updateQuantity={null}
-                removeItem={null}
-                isOptimized={isOptimized}
-            />
-            <View className="absolute bottom-0 left-0 right-0">
-                <Button title="Optimize" onPress={null} disabled={isOptimized}/>
+        <SafeAreaView style={tw`flex flex-1 bg-background`}>
+            <Header type={"circle"} title={"Shopping Name (TBD)"} onLeftPress={() => goBack()} onRightPress={null}
+                    back={true} rightIcon={true}/>
+            <View style={tw`flex flex-1 p-4`}>
+                <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
+                <View style={tw`flex flex-1 justify-between`}>
+                    <CategoryList
+                        categories={categories}
+                        toggleCategory={null}
+                        isOptimized={isOptimized}
+                    />
+                    <View style={tw`w-30 h-12`}>
+                        <Pressable onPress={null} disabled={isOptimized} style={tw`flex-1 rounded-3xl bg-blue-500 p-4 justify-center`}>
+                            <Text style={tw`flex-1 text-center`}>Optimize</Text>
+                        </Pressable>
+                    </View>
+                </View>
             </View>
-        </View>
+        </SafeAreaView>
     );
 }

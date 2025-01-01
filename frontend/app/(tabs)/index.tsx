@@ -1,11 +1,14 @@
-import { Text, View } from 'react-native';
-import { Link } from 'expo-router';
+import {Text, View} from 'react-native';
+import {Link} from 'expo-router';
+import tw from 'twrnc';
 
 export default function IndexScreen() {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Home Screen</Text>
-      <Link href="/shopping">Go to Shopping</Link>
-    </View>
-  );
+    return (
+        <View style={tw`flex-1 justify-center items-center`}>
+            <Text style={tw`text-lg`}>Home Screen</Text>
+            <Link href="/shopping" style={tw`text-blue-500 underline mt-2`}>
+                Go to Shopping
+            </Link>
+        </View>
+    );
 }

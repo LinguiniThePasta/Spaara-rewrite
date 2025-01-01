@@ -1,9 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, TouchableOpacity, FlatList} from 'react-native';
+import {View, Text, TextInput, FlatList, SafeAreaView, Pressable, Modal} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useNavigation} from '@react-navigation/native';
 import {router} from "expo-router";
+import tw from 'twrnc';
+import {Header} from "@/components/ui/Header";
+import {SearchBar} from "@/components/ui/SearchBar";
+import {useRouter} from "expo-router";
 
 export default function ShoppingListsScreen() {
     const navigation = useNavigation();
@@ -12,7 +16,10 @@ export default function ShoppingListsScreen() {
         {id: 2, name: 'Party Supplies', itemCount: 8},
         {id: 3, name: 'Weekly Essentials', itemCount: 12},
     ]);
-    const [newListName, setNewListName] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedItem, setSelectedItem] = useState(null);
+    const router = useRouter();
 
     useEffect(() => {
         const checkActiveList = async () => {
@@ -24,60 +31,82 @@ export default function ShoppingListsScreen() {
         checkActiveList();
     }, [navigation]);
 
+
     const addList = async () => {
-        if (newListName.trim() !== '') {
-            const newList = {id: Date.now(), name: newListName, itemCount: 0};
-            setLists([...lists, newList]);
-            setNewListName('');
-            await AsyncStorage.setItem('activeListId', newList.id.toString());
-            router.push(`/shopping/${newList.id}`);
-        }
+        // Router Push this so it goes to the new list automatically
+    };
+    const confirmDelete = () => {
+        setModalVisible(false);
+        // Add your delete logic here
+        console.log(`Deleted item with ID: ${selectedItem.id}`);
+        // Example: Remove the item from the list
+        // const updatedData = data.filter(item => item.id !== selectedItem.id);
+        // setData(updatedData);
     };
 
     const renderItem = ({item}) => (
-        <TouchableOpacity
+        <Pressable
             onPress={() => router.push(`/shopping/${item.id}`)}
-            className="bg-white p-4 rounded-lg shadow hover:shadow-md mb-2"
+            style={tw`bg-white p-4 rounded-lg shadow mb-2`}
         >
-            <View className="flex-row justify-between items-center">
+            <View style={tw`flex-row justify-between items-center`}>
                 <View>
-                    <Text className="font-semibold text-lg">{item.name}</Text>
-                    <Text className="text-sm text-gray-600">{item.itemCount} items</Text>
+                    <Text style={tw`font-semibold text-lg`}>{item.name}</Text>
+                    <Text style={tw`text-sm text-gray-600`}>{item.itemCount} items</Text>
                 </View>
-                <Ionicons name="cart-outline" size={20} color="#aaa"/>
+                <Pressable
+                    onPress={() => {
+                        setSelectedItem(item);
+                        setModalVisible(true);
+                    }}
+                >
+                    <Ionicons name="trash-outline" size={20} color="#aaa"/>
+                </Pressable>
             </View>
-        </TouchableOpacity>
+        </Pressable>
     );
-
     return (
-        <View className="flex-1 bg-gray-100">
-            <View className="bg-blue-500 p-4">
-                <Text className="text-white text-2xl font-bold">Shopping Lists</Text>
-            </View>
-
-            <View className="flex-1 container mx-auto p-4">
-                <View className="flex-row items-center mb-4">
-                    <TextInput
-                        value={newListName}
-                        onChangeText={setNewListName}
-                        placeholder="New list name"
-                        className="flex-1 p-2 border rounded-l-lg bg-white"
-                    />
-                    <TouchableOpacity
-                        onPress={addList}
-                        className="bg-blue-500 p-2 rounded-r-lg justify-center items-center"
-                    >
-                        <Ionicons name="add" size={24} color="white"/>
-                    </TouchableOpacity>
-                </View>
-
+        <SafeAreaView style={tw`flex-1 bg-gray-100`}>
+            <Header type={"circle"} title={"Shopping Lists"} onLeftPress={null} onRightPress={null} back={false} rightIcon={true}/>
+            <View style={tw`flex-1 p-4`}>
+                <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
                 <FlatList
                     data={lists}
                     keyExtractor={(item) => item.id.toString()}
                     renderItem={renderItem}
-                    contentContainerStyle={{paddingBottom: 20}}
+                    contentContainerStyle={tw`pb-20`}
                 />
+                {/* Modal */}
+                <Modal
+                    transparent={true}
+                    visible={modalVisible}
+                    animationType="slide"
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View style={tw`flex-1 justify-center items-center bg-black bg-opacity-50`}>
+                        <View style={tw`bg-white p-6 rounded-lg w-4/5`}>
+                            <Text style={tw`text-lg font-semibold mb-4`}>
+                                Are you sure you want to delete "{selectedItem?.name}"?
+                            </Text>
+                            <View style={tw`flex-row justify-between`}>
+                                <Pressable
+                                    onPress={() => setModalVisible(false)}
+                                    style={tw`px-4 py-2 bg-gray-300 rounded-md`}
+                                >
+                                    <Text style={tw`text-gray-700`}>Cancel</Text>
+                                </Pressable>
+                                <Pressable
+                                    onPress={confirmDelete}
+                                    style={tw`px-4 py-2 bg-red-500 rounded-md`}
+                                >
+                                    <Text style={tw`text-white`}>Delete</Text>
+                                </Pressable>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
             </View>
-        </View>
+
+        </SafeAreaView>
     );
 }

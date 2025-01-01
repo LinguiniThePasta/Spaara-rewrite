@@ -1,35 +1,38 @@
-import React from 'react';
-import {View, Text, TouchableOpacity, FlatList} from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import React from "react";
+import {View, Text, Pressable, FlatList} from "react-native";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import {CategoryItem} from "@/components/ui/CategoryItem";
+import tw from "twrnc";
 
-export function CategoryList({categories, toggleCategory, toggleFavorite, updateQuantity, removeItem, isOptimized}) {
+export function CategoryList({
+                                 categories,
+                                 toggleCategory,
+                                 isOptimized,
+                             }) {
     return (
         <FlatList
             data={categories}
             keyExtractor={(category) => category.id.toString()}
             renderItem={({item: category}) => (
-                <View className="mt-4">
-                    <TouchableOpacity onPress={() => toggleCategory(category.id)}
-                                      className="flex-row items-center gap-2">
-                        <Ionicons name={category.isExpanded ? 'chevron-down' : 'chevron-forward'} size={20}/>
-                        <Text className="font-medium">{category.name}</Text>
-                    </TouchableOpacity>
+                <View style={tw`mt-4`}>
+                    <Pressable
+                        onPress={() => toggleCategory(category.id)}
+                        style={tw`flex-row items-center gap-2`}
+                    >
+                        <Ionicons
+                            name={category.isExpanded ? "chevron-down" : "chevron-forward"}
+                            size={20}
+                        />
+                        <Text style={tw`font-medium`}>{category.name}</Text>
+                    </Pressable>
                     {category.isExpanded &&
-                        category.items.map(item => (
-                            <View key={item.id} className="flex-row items-center gap-3">
-                                <Text>{item.name}</Text>
-                                <TouchableOpacity onPress={() => toggleFavorite(category.id, item.id)}>
-                                    <Ionicons name={item.favorited ? 'star' : 'star-outline'} size={20}
-                                              color={item.favorited ? '#FFD700' : '#aaa'}/>
-                                </TouchableOpacity>
-                                <TouchableOpacity
-                                    onPress={() => updateQuantity(category.id, item.id, item.quantity + 1)}>
-                                    <Ionicons name="add" size={20}/>
-                                </TouchableOpacity>
-                                <TouchableOpacity onPress={() => removeItem(category.id, item.id)}>
-                                    <Ionicons name="trash" size={20} color="#aaa"/>
-                                </TouchableOpacity>
-                            </View>
+                        category.items.map((item) => (
+                            <CategoryItem
+                                key={item.id}
+                                category={category}
+                                item={item}
+                                isOptimized={isOptimized}
+                            />
                         ))}
                 </View>
             )}
