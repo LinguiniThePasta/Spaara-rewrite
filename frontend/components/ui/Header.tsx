@@ -3,7 +3,14 @@ import {View, Text, Pressable, Image} from "react-native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import tw from "twrnc";
 
-export function Header({type, title, onLeftPress, onRightPress, back, rightIcon}) {
+export function Header({
+                           type = 'circle',
+                           title = '',
+                           onLeftPress = () => {},
+                           onRightPress = () => {},
+                           back = false,
+                           rightIcon = true
+}) {
     return (
         <View
             style={tw`flex-row items-center justify-between px-4 py-3 bg-gray-100`}

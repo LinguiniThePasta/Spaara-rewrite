@@ -26,7 +26,7 @@ export default function ProfileScreen() {
     return (
         <ScrollView style={tw`flex-1 bg-gray-100`}>
             <SafeAreaView>
-                <Header type={"circle"} title={"Profile"} onLeftPress={() => router.back()} onRightPress={null} back={true} rightIcon={false}/>
+                <Header type={"circle"} title={"Profile"} onLeftPress={() => router.back()} back={true} rightIcon={false}/>
                 <View style={tw`px-4 py-6`}>
                     <View>
                         <View style={tw`mb-4`}>

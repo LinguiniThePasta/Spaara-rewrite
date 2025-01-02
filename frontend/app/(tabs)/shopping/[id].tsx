@@ -67,7 +67,7 @@ export default function ShoppingDetailScreen() {
     }
     return (
         <SafeAreaView style={tw`flex flex-1 bg-background`}>
-            <Header type={"circle"} title={"Shopping Name (TBD)"} onLeftPress={() => goBack()} onRightPress={null}
+            <Header type={"circle"} title={"Shopping Name (TBD)"} onLeftPress={() => goBack()}
                     back={true} rightIcon={true}/>
             <View style={tw`flex flex-1 p-4`}>
                 <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm}/>
