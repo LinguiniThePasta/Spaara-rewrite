@@ -3,3 +3,4 @@ psycopg2==2.9.10
 python-jose==3.3.0
 social-auth-app-django==5.4.2
 python-dotenv==1.0.1
+django-cors-headers==4.6.0
